@@ -1,0 +1,36 @@
+version: '3.1'
+services:
+  service:
+    image: backend:dev
+    build:
+      context: .
+    restart: always
+    ports:
+      - "6060"
+      - "8080:8080"
+    networks:
+      - mynet
+ 
+  db:
+    image: postgres
+    restart: always
+    environment:
+      POSTGRES_PASSWORD: example
+    volumes:
+      - ./init-database.sh:/docker-entrypoint-initdb.d/init-database.sh
+    ports:
+      - "5432:5432"
+    networks:
+      - mynet
+
+  adminer:
+    image: adminer
+    restart: always
+    ports:
+      - 8888:8888
+    networks:
+      - mynet
+
+networks:
+  mynet:
+    driver: bridge

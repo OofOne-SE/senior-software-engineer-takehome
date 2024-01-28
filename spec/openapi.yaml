@@ -1,0 +1,118 @@
+swagger: "2.0"
+consumes:
+  - application/json
+produces:
+  - application/json
+schemes:
+  - https
+  - http
+info:
+  description: Backend API
+  title: Backend API
+  version: 1.0.0
+basePath: /api
+
+tags:
+  - name: Weather Assets
+    description: Humidity and temperature data
+    externalDocs:
+      description: Find out more
+      url: http://swagger.io
+
+paths:
+  /data/weather:
+    get:
+      tags:
+        - Weather Assets
+      summary: Returns weather data for specific day or interval. For a single day use same date as from and to parameters
+      parameters:
+        - in: query
+          name: from
+          required: true
+          type: string
+          format: date
+        - in: query
+          name: to
+          required: true
+          type: string
+          format: date
+      security: []
+      responses:
+        200:
+          description: Successful, returns weather data units in array or nil array
+          schema:
+            type: array
+            items:
+              $ref: "#/definitions/WeatherUnit"
+        default:
+          description: |
+            errors:
+            | code                                   | HTTP Code | error                 |
+            |----------------------------------------|-----------|---------------------- |
+            | data.weather.get.internal_server_error | 500       | Internal server error |
+          schema:
+            $ref: "#/definitions/Error"
+    post:
+      tags:
+        - Weather Assets
+      summary: Single weather data is created
+      parameters:
+        - in: body
+          name: body
+          required: true
+          schema:
+            $ref: "#/definitions/WeatherUnit"
+      responses:
+        200:
+          description: Successfully created
+        default:
+          description: |
+            errors:
+            | code                                    | HTTP Code | error                 |
+            |-----------------------------------------|-----------|---------------------- |
+            | data.weather.post.internal_server_error | 500       | Internal server error |
+          schema:
+            $ref: "#/definitions/Error"
+  /ws:
+    get:
+      tags:
+        - Service
+      summary: Subscribe to weather data events
+      security: []
+      responses:
+        101:
+          description: Done
+
+definitions:
+  WeatherUnit:
+    type: object
+    required:
+      - date
+      - temperature
+      - humidity
+    properties:
+      id:
+        type: string
+        format: uuid
+        readOnly: true
+      date:
+        type: string
+        format: date
+      temperature:
+        type: number
+      humidity:
+        type: number
+
+  Error:
+    type: object
+    properties:
+      error:
+        type: string
+      code:
+        type: string
+      request_id:
+        type: string
+    example:
+      error: Internal server error
+      code: data.weather.get.internal_server_error
+      requiest_id: b4fcca1d-e391-4a4c-bb50-6b67343ed9f1
