@@ -21,6 +21,7 @@ I assume you are working with some linux machine and installed docker, docker co
     - Production solution
 - Human readable endpoint specification
     - Frontend devs or tester onboard faster and could also generate their clients
+    - Present it in an interactive manner as HTML page with: `make showspec`
 - Almost ready to deploy:
     - Add GitHub scripts for CI/CD
     - Add oauth2 authentication
